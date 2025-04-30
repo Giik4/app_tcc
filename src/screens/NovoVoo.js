@@ -1,16 +1,24 @@
 import React, {useState} from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
-import {Picker} from '@react-native-picker/picker';
+import api from '../services/Api';
 import MapView, {Polygon, Marker, Polyline} from 'react-native-maps';
-import {createBoustrophedonGrid} from '../geoUtils/Boustrophedon';
-import {calculateConvexHull} from '../geoUtils/ConvexHull';
-import {createStcGrid} from '../geoUtils/SpanningTree';
+import {createBoustrophedonGrid} from '../geoUtils/boustrophedon';
+import {calculateConvexHull} from '../geoUtils/convexHull';
+import {calculateTotalDistance} from '../geoUtils/calculateTotalDistance';
+import {useRoute} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
 
 const NovoVoo = () => {
+  const route = useRoute();
+  const item = route.params;
   const [polygonCoordinates, setPolygonCoordinates] = useState([]);
   const [selectedVertexIndex, setSelectedVertexIndex] = useState(null);
   const [gridPoints, setGridPoints] = useState([]);
-  const [selectedMethod, setSelectedMethod] = useState('stc');
+  const token = useSelector(state => state.auth.token);
+
+  const stepSize = 20; // Distância entre linhas em metros
+  const overlap = 0.1; // Sobreposição entre linhas
+  const altura = stepSize / (1 - overlap);
 
   const handleMapPress = event => {
     const {coordinate} = event.nativeEvent;
@@ -24,15 +32,70 @@ const NovoVoo = () => {
 
   const generatePath = () => {
     const convexHull = calculateConvexHull(polygonCoordinates);
-    let grid;
 
-    if (selectedMethod === 'boustrophedon') {
-      grid = createBoustrophedonGrid(convexHull);
-    } else {
-      grid = createStcGrid(convexHull);
+    setGridPoints(createBoustrophedonGrid(convexHull, stepSize, overlap));
+  };
+
+  const registrarVoo = async () => {
+    try {
+      const distance = Math.round(calculateTotalDistance(gridPoints)); // em metros
+
+      const pointsForApi = gridPoints.map((p, index) => ({
+        latitude: p.latitude,
+        longitude: p.longitude,
+        altitude: altura,
+        number: index,
+      }));
+
+      // Criando o voo
+      const flightResponse = await api.post(
+        `/plantations/${item.id}/flights`,
+        {
+          aircraft: 'Mavic Pro',
+          flight_time: '00:45:30', // certifique-se do formato aceito pela API
+          distance: distance,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      console.log('Voo criado:', flightResponse.data);
+
+      // Agora, após o voo ser criado, tentamos cadastrar os waypoints.
+      const flightId = flightResponse.data.id; // id do voo criado
+
+      // Envia os waypoints
+      return api
+        .post(
+          `/plantations/${item.id}/flights/${flightId}/waypoints/batch`,
+          {waypoints: pointsForApi},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        )
+        .then(waypointsResponse => {
+          console.log(
+            'Waypoints cadastrados com sucesso:',
+            waypointsResponse.data,
+          );
+        })
+        .catch(error => {
+          console.error(
+            'Erro ao cadastrar waypoints:',
+            error.response?.data || error.message,
+          );
+        });
+    } catch (error) {
+      console.error(
+        'Erro ao criar voo:',
+        error.response?.data || error.message,
+      );
     }
-
-    setGridPoints(grid);
   };
 
   return (
@@ -79,23 +142,18 @@ const NovoVoo = () => {
         <Polyline coordinates={gridPoints} strokeWidth={2} strokeColor="blue" />
       </MapView>
 
-      <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={selectedMethod}
-          onValueChange={itemValue => setSelectedMethod(itemValue)}
-          style={styles.picker}
-          dropdownIconColor="white">
-          <Picker.Item label="STC" value="stc" />
-          <Picker.Item label="Boustrophedon" value="boustrophedon" />
-        </Picker>
-      </View>
-
       <TouchableOpacity style={styles.clearButton} onPress={clearPoints}>
         <Text style={styles.clearButtonText}>Limpar Pontos</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.generateButton} onPress={generatePath}>
         <Text style={styles.clearButtonText}>Gerar Caminho</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[styles.clearButton, {right: 10}]}
+        onPress={() => registrarVoo()}>
+        <Text style={styles.clearButtonText}>Enviar Caminho</Text>
       </TouchableOpacity>
     </View>
   );

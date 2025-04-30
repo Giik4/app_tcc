@@ -3,7 +3,7 @@
 import React, {useState} from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import MapView, {Polygon, Marker, Polyline} from 'react-native-maps';
-import {createBoustrophedonGrid} from '../geoUtils/Boustrophedon';
+import {createBoustrophedonGrid} from '../geoUtils/boustrophedon';
 import {polygon} from '@turf/turf';
 
 const NovoVoo = () => {

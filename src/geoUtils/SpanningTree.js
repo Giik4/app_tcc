@@ -1,3 +1,5 @@
+//****INCOMPLETO****
+
 import {isPointInPolygon} from 'geolib';
 
 export const createStcGrid = (polygon, cellSize = 0.0001) => {

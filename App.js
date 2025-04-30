@@ -10,6 +10,7 @@ import Voo from './src/screens/Voo';
 import BottomTabs from './src/screens/BottomTabs';
 import {Provider} from 'react-redux';
 import {store} from './src/redux/store';
+import NovoVoo from './src/screens/NovoVoo';
 
 const Stack = createStackNavigator();
 
@@ -69,6 +70,11 @@ const App = () => {
             options={({route}) => ({
               title: route.params.item.date,
             })}
+          />
+          <Stack.Screen
+            name="NovoVoo"
+            component={NovoVoo}
+            options={{headerShown: false}}
           />
         </Stack.Navigator>
       </NavigationContainer>

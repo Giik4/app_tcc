@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
 import MapView, {Marker, Polygon, Polyline} from 'react-native-maps';
-import {createBoustrophedonGrid} from '../geoUtils/Boustrophedon';
+import {createBoustrophedonGrid} from '../geoUtils/boustrophedon';
 
 const App = () => {
   // Exemplo de polígono (não precisa ser um retângulo!)

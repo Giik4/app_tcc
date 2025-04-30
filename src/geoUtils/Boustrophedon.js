@@ -1,16 +1,11 @@
-import {
-  getDistance,
-  getRhumbLineBearing,
-  computeDestinationPoint,
-  isPointInPolygon,
-} from 'geolib';
+import {computeDestinationPoint, isPointInPolygon} from 'geolib';
 
 /**
  * Gera uma grade Boustrophedon (vaivém) dentro de um polígono arbitrário.
  * @param {Array} polygonVertices - Lista de vértices [{ latitude, longitude }]
  * @returns {Array} Lista de coordenadas no padrão Boustrophedon
  */
-export const createBoustrophedonGrid = polygonVertices => {
+export const createBoustrophedonGrid = (polygonVertices, stepSize, overlap) => {
   if (polygonVertices.length < 3) return []; // Precisa de pelo menos 3 pontos para formar um polígono
 
   // Caixa delimitadora do polígono (bounding box)
@@ -20,8 +15,6 @@ export const createBoustrophedonGrid = polygonVertices => {
   const maxLng = Math.max(...polygonVertices.map(p => p.longitude));
 
   // Parâmetros de varredura
-  const stepSize = 20; // Distância entre linhas em metros
-  const overlap = 0.1; // Sobreposição entre linhas
   const stepSizeOverlap = stepSize * (1 - overlap);
 
   let grid = [];

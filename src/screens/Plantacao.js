@@ -15,6 +15,7 @@ import CardVoo from '../components/CardVoo';
 import {useRoute} from '@react-navigation/native';
 import {FlatList} from 'react-native-gesture-handler';
 import {useFocusEffect} from '@react-navigation/native';
+import {center} from '@turf/turf';
 
 const Plantacao = props => {
   const navigation = useNavigation();
@@ -56,6 +57,21 @@ const Plantacao = props => {
             <Text>Não há voos cadastrados.</Text>
           ) : (
             <FlatList
+              ListHeaderComponent={
+                <>
+                  <TouchableOpacity
+                    style={estilos.novoVoo}
+                    onPress={() => navigation.navigate('NovoVoo', item)}>
+                    <Icon
+                      style={{marginTop: 0}}
+                      name="plus"
+                      size={65}
+                      color="black"
+                    />
+                    <Text style={estilos.textoNovoVoo}>Novo Voo</Text>
+                  </TouchableOpacity>
+                </>
+              }
               horizontal={true}
               data={list}
               renderItem={({item}) => (
@@ -66,6 +82,7 @@ const Plantacao = props => {
                 />
               )}
               keyExtractor={item => item.id.toString()}
+              ItemSeparatorComponent={() => <View style={{width: 5}} />}
             />
           )}
         </View>
@@ -250,6 +267,20 @@ const estilos = StyleSheet.create({
     width: '100%',
     position: 'absolute',
     marginTop: '175%',
+  },
+
+  novoVoo: {
+    marginRight: 18,
+    gap: 7,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: 0,
+  },
+
+  textoNovoVoo: {
+    fontFamily: 'RobotoCondensed-Medium',
+    fontSize: 20,
+    color: 'black',
   },
 });
 

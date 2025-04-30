@@ -12,7 +12,9 @@ export const fetchFlights = createAsyncThunk(
         headers: {Authorization: `Bearer ${token}`},
       });
 
-      console.log(`Resposta da API voo para ${plantationId}: ${response.data}`);
+      console.log(
+        `Resposta da API voo para ${plantationId}: ${response.data.flights}`,
+      );
 
       return response.data.flights.map(flight => ({
         id: flight.id,
@@ -20,6 +22,7 @@ export const fetchFlights = createAsyncThunk(
         flightTime: flight.flight_time,
         distance: flight.distance,
         date: flight.date,
+        plantationId: flight.plantation_id,
       }));
     } catch (error) {
       console.log(

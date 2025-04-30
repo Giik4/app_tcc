@@ -10,80 +10,112 @@ import {
 import Botao from '../components/Botao';
 import Header from '../components/Header';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import CardVoo from '../components/CardVoo';
 import Menu from '../components/Menu';
 import CardCaptura from '../components/CardCaptura';
+import {useRoute} from '@react-navigation/native';
+import api from '../services/Api';
+import {useSelector} from 'react-redux';
+import {FlatList} from 'react-native-gesture-handler';
 
 const Voo = props => {
+  const route = useRoute();
+  const {item} = route.params;
+  const token = useSelector(state => state.auth.token);
+  const [waypoints, setWaypoints] = useState([]);
+
+  const stepSize = 20; // Distância entre linhas em metros
+  const overlap = 0.1; // Sobreposição entre linhas
+
+  useEffect(() => {
+    const fetchWaypoints = async () => {
+      try {
+        const response = await api.get(
+          `/plantations/${item.plantationId}/flights/${item.id}/waypoints`,
+          {
+            headers: {Authorization: `Bearer ${token}`},
+          },
+        );
+
+        const formatted = response.data.waypoints.map(waypoint => ({
+          latitude: waypoint.latitude,
+          longitude: waypoint.longitude,
+          altitude: waypoint.altitude,
+          number: waypoint.number,
+        }));
+
+        setWaypoints(formatted);
+      } catch (error) {
+        console.log(
+          'Erro ao buscar waypoints:',
+          error.response?.data || error.message,
+        );
+      }
+    };
+
+    fetchWaypoints();
+  }, []);
+
   return (
     <View style={estilos.tela}>
-      <ScrollView
+      <FlatList
+        ListHeaderComponent={
+          <>
+            <View style={estilos.containerInfo}>
+              <Text style={estilos.informacoes}>Informações</Text>
+
+              <View>
+                <Text style={estilos.titulo}>Aeronave</Text>
+                <Text style={estilos.atributo}>{item.aircraft}</Text>
+              </View>
+
+              <View>
+                <Text style={estilos.titulo}>Tempo de Voo</Text>
+                <Text style={estilos.atributo}>{item.flightTime}</Text>
+              </View>
+
+              <View>
+                <Text style={estilos.titulo}>Data</Text>
+                <Text style={estilos.atributo}>{item.date}</Text>
+              </View>
+
+              <View>
+                <Text style={estilos.titulo}>Distância Percorrida</Text>
+                <Text style={estilos.atributo}>{item.distance} m</Text>
+              </View>
+            </View>
+
+            <Text style={estilos.informacoes}>Waypoints e Capturas</Text>
+          </>
+        }
+        ListHeaderComponentStyle={estilos.containerInfo}
+        data={waypoints}
+        renderItem={({item}) => (
+          <CardCaptura
+            image={require('../../assets/images/ortofoto.jpeg')}
+            latitude={item.latitude}
+            longitude={item.longitude}
+            altitude={item.altitude}
+          />
+        )}
+        keyExtractor={(item, index) => index.toString()}
         vertical={true}
-        style={estilos.scrollVert}
-        contentContainerStyle={estilos.containerPlant}>
-        <View style={estilos.containerInfo}>
-          <Text style={estilos.informacoes}>Informações</Text>
-
-          <View>
-            <Text style={estilos.titulo}>Aeronave</Text>
-            <Text style={estilos.atributo}>Mavic Pro</Text>
-          </View>
-
-          <View>
-            <Text style={estilos.titulo}>Tempo de Voo</Text>
-            <Text style={estilos.atributo}>0:22:15</Text>
-          </View>
-
-          <View>
-            <Text style={estilos.titulo}>Data</Text>
-            <Text style={estilos.atributo}>10/10/2023 15:10:23</Text>
-          </View>
-
-          <View>
-            <Text style={estilos.titulo}>Distância Percorrida</Text>
-            <Text style={estilos.atributo}>1557 m</Text>
-          </View>
-        </View>
-
-        <Text style={estilos.informacoes}>Waypoints e Capturas</Text>
-
-        <CardCaptura
-          image={require('../../assets/images/ortofoto.jpeg')}
-          coordenada="-41.876167, 0.984000, 292.3m"
-        />
-
-        <CardCaptura
-          image={require('../../assets/images/ortofoto.jpeg')}
-          coordenada="-41.876167, 0.984000, 292.3m"
-        />
-
-        <CardCaptura
-          image={require('../../assets/images/ortofoto.jpeg')}
-          coordenada="-41.876167, 0.984000, 292.3m"
-        />
-
-        <CardCaptura
-          image={require('../../assets/images/ortofoto.jpeg')}
-          coordenada="-41.876167, 0.984000, 292.3m"
-        />
-
-        <CardCaptura
-          image={require('../../assets/images/ortofoto.jpeg')}
-          coordenada="-41.876167, 0.984000, 292.3m"
-        />
-
-        <View style={estilos.containerOpcoes}>
-          <TouchableOpacity style={{alignItems: 'center'}}>
-            <Icon name="checkerboard" size={60} color="black" />
-            <Text style={estilos.texto}>Ortomosaico</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={{alignItems: 'center'}}>
-            <Icon name="delete" size={60} color="black" />
-            <Text style={estilos.texto}>Deletar</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+        ItemSeparatorComponent={() => <View style={{height: 5}} />}
+        ListFooterComponent={
+          <>
+            <TouchableOpacity style={{alignItems: 'center'}}>
+              <Icon name="checkerboard" size={60} color="black" />
+              <Text style={estilos.texto}>Ortomosaico</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={{alignItems: 'center'}}>
+              <Icon name="delete" size={60} color="black" />
+              <Text style={estilos.texto}>Deletar</Text>
+            </TouchableOpacity>
+          </>
+        }
+        ListFooterComponentStyle={estilos.containerOpcoes}
+      />
     </View>
   );
 };
