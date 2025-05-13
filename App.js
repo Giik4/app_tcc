@@ -11,6 +11,8 @@ import BottomTabs from './src/screens/BottomTabs';
 import {Provider} from 'react-redux';
 import {store} from './src/redux/store';
 import NovoVoo from './src/screens/NovoVoo';
+import EditarPlantacao from './src/screens/EditarPlantacao';
+import EditarUsuario from './src/screens/EditarUsuario';
 
 const Stack = createStackNavigator();
 
@@ -58,11 +60,21 @@ const App = () => {
             options={{headerShown: false}}
           />
           <Stack.Screen
+            name="EditarUsuario"
+            component={EditarUsuario}
+            options={{title: 'Editar Perfil'}}
+          />
+          <Stack.Screen
             name="Plantacao"
             component={Plantacao}
             options={({route}) => ({
               title: route.params.item.name,
             })}
+          />
+          <Stack.Screen
+            name="EditarPlantacao"
+            component={EditarPlantacao}
+            options={{title: 'Editar Plantação'}}
           />
           <Stack.Screen
             name="Voo"

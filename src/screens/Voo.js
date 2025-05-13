@@ -18,12 +18,14 @@ import {useRoute} from '@react-navigation/native';
 import api from '../services/Api';
 import {useSelector} from 'react-redux';
 import {FlatList} from 'react-native-gesture-handler';
+import Popup from '../components/Popup';
 
 const Voo = props => {
   const route = useRoute();
   const {item} = route.params;
   const token = useSelector(state => state.auth.token);
   const [waypoints, setWaypoints] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const stepSize = 20; // Distância entre linhas em metros
   const overlap = 0.1; // Sobreposição entre linhas
@@ -108,13 +110,22 @@ const Voo = props => {
               <Icon name="checkerboard" size={60} color="black" />
               <Text style={estilos.texto}>Ortomosaico</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={{alignItems: 'center'}}>
+            <TouchableOpacity
+              style={{alignItems: 'center'}}
+              onPress={() => setModalVisible(true)}>
               <Icon name="delete" size={60} color="black" />
               <Text style={estilos.texto}>Deletar</Text>
             </TouchableOpacity>
           </>
         }
         ListFooterComponentStyle={estilos.containerOpcoes}
+      />
+
+      <Popup
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        navigation={props.navigation}
+        onConfirm={() => excluirPesquisa()}
       />
     </View>
   );

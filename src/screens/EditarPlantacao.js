@@ -14,15 +14,19 @@ import {useState} from 'react';
 import api from '../services/Api';
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
+import {useRoute} from '@react-navigation/native';
 import {fetchPlantations} from '../redux/plantationSlice';
 
-const NovaPlantacao = props => {
+const EditarPlantacao = props => {
+  const route = useRoute();
+  const {item} = route.params;
+
   const [nome, setNome] = useState('');
   const [cultura, setCultura] = useState('');
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   const [semente, setSemente] = useState('');
-  const [dataPlantio, setDataPlantio] = useState(null);
+  const [dataPlantio, setDataPlantio] = useState('');
   const [descricao, setDescricao] = useState('');
 
   const dispatch = useDispatch();
@@ -34,37 +38,36 @@ const NovaPlantacao = props => {
     setLatitude('');
     setLongitude('');
     setSemente('');
-    setDataPlantio(null);
+    setDataPlantio('');
     setDescricao('');
   };
 
-  const cadastrar = async () => {
-    if (nome === '' || cultura === '' || latitude === '' || longitude === '') {
-      alert('Preencha todos os campos obrigatórios!');
-    } else {
-      try {
-        const res = await api.post(
-          '/plantations/',
-          {
-            name: nome,
-            crop: cultura,
-            latitude: latitude,
-            longitude: longitude,
-            seed: semente,
-            description: descricao,
-            date_planted: dataPlantio,
-          },
-          {
-            headers: {Authorization: `Bearer ${token}`},
-          },
-        );
-        console.log(res.data);
-        limparCampos();
-        alert('Plantação cadastrada com sucesso!');
-      } catch (error) {
-        console.log(error);
-        alert('Erro ao cadastrar a plantação!/n' + error.message);
-      }
+  const atualizar = async () => {
+    try {
+      const payload = {};
+
+      if (nome.trim() !== '') payload.name = nome;
+      if (cultura.trim() !== '') payload.crop = cultura;
+      if (latitude.trim() !== '') payload.latitude = parseFloat(latitude);
+      if (longitude.trim() !== '') payload.longitude = parseFloat(longitude);
+      if (semente.trim() !== '') payload.seed = semente;
+      if (descricao.trim() !== '') payload.description = descricao;
+      if (dataPlantio.trim() !== '') payload.date_planted = dataPlantio;
+
+      const res = await api.patch(`/plantations/${item.id}`, payload, {
+        headers: {Authorization: `Bearer ${token}`},
+      });
+
+      console.log(res.data);
+
+      limparCampos();
+      dispatch(fetchPlantations);
+      props.navigation.pop();
+
+      alert('Plantação atualizada com sucesso!');
+    } catch (error) {
+      console.log(error);
+      alert('Erro ao editar a plantação!/n' + error.message);
     }
   };
 
@@ -75,38 +78,42 @@ const NovaPlantacao = props => {
         style={estilos.scroll}
         contentContainerStyle={estilos.containerCad}>
         <View style={estilos.caixaDeTexto}>
-          <Text style={estilos.texto}>Nome da plantação*</Text>
+          <Text style={estilos.texto}>Nome da plantação</Text>
           <TextInput
             style={estilos.textInput}
             value={nome}
             onChangeText={setNome}
+            placeholder={item.name}
           />
         </View>
 
         <View style={estilos.caixaDeTexto}>
-          <Text style={estilos.texto}>Cultura*</Text>
+          <Text style={estilos.texto}>Cultura</Text>
           <TextInput
             style={estilos.textInput}
             value={cultura}
             onChangeText={setCultura}
+            placeholder={item.crop}
           />
         </View>
 
         <View style={estilos.caixaDeTexto}>
-          <Text style={estilos.texto}>Latitude*</Text>
+          <Text style={estilos.texto}>Latitude</Text>
           <TextInput
             style={estilos.textInput}
             value={latitude}
             onChangeText={setLatitude}
+            placeholder={item.latitude}
           />
         </View>
 
         <View style={estilos.caixaDeTexto}>
-          <Text style={estilos.texto}>Longitude*</Text>
+          <Text style={estilos.texto}>Longitude</Text>
           <TextInput
             style={estilos.textInput}
             value={longitude}
             onChangeText={setLongitude}
+            placeholder={item.longitude}
           />
         </View>
         <View style={estilos.caixaDeTexto}>
@@ -115,6 +122,7 @@ const NovaPlantacao = props => {
             style={estilos.textInput}
             value={semente}
             onChangeText={setSemente}
+            placeholder={item.seed}
           />
         </View>
 
@@ -124,6 +132,7 @@ const NovaPlantacao = props => {
             style={estilos.textInput}
             value={dataPlantio}
             onChangeText={setDataPlantio}
+            placeholder={item.datePlanted}
           />
         </View>
 
@@ -135,6 +144,7 @@ const NovaPlantacao = props => {
             onChangeText={setDescricao}
             multiline={true}
             numberOfLines={7}
+            placeholder={item.description}
           />
         </View>
 
@@ -146,7 +156,7 @@ const NovaPlantacao = props => {
         </View>
 
         <View style={estilos.containerEntrar}>
-          <Botao texto="Cadastrar" funcao={cadastrar} />
+          <Botao texto="Editar" funcao={atualizar} />
         </View>
       </ScrollView>
     </View>
@@ -263,4 +273,4 @@ const estilos = StyleSheet.create({
   },
 });
 
-export default NovaPlantacao;
+export default EditarPlantacao;

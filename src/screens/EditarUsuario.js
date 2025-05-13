@@ -5,21 +5,20 @@ import {
   TextInput,
   Text,
   StyleSheet,
-  Alert,
 } from 'react-native';
 import Botao from '../components/Botao';
 import Header from '../components/Header';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useState} from 'react';
 import api from '../services/Api';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
+import {fetchUser} from '../redux/userSlice';
 
-const NovaConta = props => {
-  const sair = () => {
-    props.navigation.pop();
-  };
-
+const EditarUsuario = props => {
   const user = useSelector(state => state.user);
+
+  const dispatch = useDispatch();
+  const token = useSelector(state => state.auth.token);
 
   const [nome, setNome] = useState('');
   const [username, setUsername] = useState('');
@@ -29,40 +28,55 @@ const NovaConta = props => {
   const [aviso, setAviso] = useState('');
   const regexEmail = /^[A-Za-z0-9.+_-]+@[A-Za-z0-9.-]+\.[a-z]{2,}$/;
 
-  const verifica = () => {
-    if (
-      nome != '' &&
-      username != '' &&
-      regexEmail.test(email) == true &&
-      senha != '' &&
-      senha == confSenha
-    ) {
-      setAviso('');
-      registrar();
-    } else {
-      if (regexEmail.test(email) == false) {
-        setAviso('E-mail inválido');
-      } else if (senha != confSenha) {
-        setAviso('As senhas inseridas são diferentes');
-      } else {
-        setAviso('Preencha todos os campos');
+  const limparCampos = () => {
+    setNome('');
+    setUsername('');
+    setEmail('');
+    setSenha('');
+    setConfSenha('');
+  };
+
+  const atualizar = async () => {
+    try {
+      const payload = {};
+
+      if (nome.trim() !== '') payload.name = nome;
+      if (username.trim() !== '') payload.username = username;
+      if (email.trim() !== '') payload.email = email;
+      if (senha.trim() !== '') payload.password = senha;
+
+      if (Object.keys(payload).length === 0) {
+        return;
       }
+
+      const res = await api.patch(`/users/${user.id}`, payload, {
+        headers: {Authorization: `Bearer ${token}`},
+      });
+
+      console.log(res.data);
+
+      limparCampos();
+      dispatch(fetchUser());
+      props.navigation.pop();
+
+      alert('Conta atualizada com sucesso!');
+    } catch (error) {
+      console.log(error);
+      alert(
+        'Erro ao editar a conta:\n' + error.response?.data.detail ||
+          error.message,
+      );
     }
   };
 
-  const registrar = async () => {
-    try {
-      const responseUser = await api.post('/users', {
-        username: username,
-        name: nome,
-        email: email,
-        password: senha,
-      });
-
-      alert('Usuário registrado com sucesso:', responseUser.data);
-      sair();
-    } catch (error) {
-      setAviso(error.response?.data?.detail || 'Tente novamente');
+  const verifica = () => {
+    if (email.trim() !== '' && regexEmail.test(email) == false) {
+      setAviso('E-mail inválido');
+    } else if (senha.trim() !== '' && senha != confSenha) {
+      setAviso('As senhas inseridas são diferentes');
+    } else {
+      setAviso('');
+      atualizar();
     }
   };
 
@@ -75,7 +89,6 @@ const NovaConta = props => {
             style={estilos.textInput}
             value={nome}
             onChangeText={setNome}
-            placeholder={user.name}
           />
         </View>
 
@@ -106,6 +119,7 @@ const NovaConta = props => {
             secureTextEntry={true}
             value={senha}
             onChangeText={setSenha}
+            placeholder="********"
           />
         </View>
         <View style={estilos.caixaDeTexto}>
@@ -115,6 +129,7 @@ const NovaConta = props => {
             secureTextEntry={true}
             value={confSenha}
             onChangeText={setConfSenha}
+            placeholder="********"
           />
         </View>
 
@@ -127,7 +142,7 @@ const NovaConta = props => {
       </View>
       <Text style={estilos.warning}>{aviso}</Text>
       <View style={estilos.containerEntrar}>
-        <Botao texto="Cadastrar" funcao={verifica} />
+        <Botao texto="Atualizar" funcao={verifica} />
       </View>
     </View>
   );
@@ -225,4 +240,4 @@ const estilos = StyleSheet.create({
   },
 });
 
-export default NovaConta;
+export default EditarUsuario;

@@ -16,6 +16,7 @@ import {useRoute} from '@react-navigation/native';
 import {FlatList} from 'react-native-gesture-handler';
 import {useFocusEffect} from '@react-navigation/native';
 import {center} from '@turf/turf';
+import {fetchPlantations} from '../redux/plantationSlice';
 
 const Plantacao = props => {
   const navigation = useNavigation();
@@ -132,7 +133,8 @@ const Plantacao = props => {
         </View>
 
         <View style={estilos.containerOpcoes}>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('EditarPlantacao', {item})}>
             <Icon name="pencil" size={60} color="black" />
             <Text style={estilos.texto}>Editar</Text>
           </TouchableOpacity>

@@ -47,12 +47,11 @@ const NovoVoo = () => {
         number: index,
       }));
 
-      // Criando o voo
       const flightResponse = await api.post(
         `/plantations/${item.id}/flights`,
         {
           aircraft: 'Mavic Pro',
-          flight_time: '00:45:30', // certifique-se do formato aceito pela API
+          flight_time: '00:45:30',
           distance: distance,
         },
         {
@@ -64,10 +63,8 @@ const NovoVoo = () => {
 
       console.log('Voo criado:', flightResponse.data);
 
-      // Agora, após o voo ser criado, tentamos cadastrar os waypoints.
-      const flightId = flightResponse.data.id; // id do voo criado
+      const flightId = flightResponse.data.id;
 
-      // Envia os waypoints
       return api
         .post(
           `/plantations/${item.id}/flights/${flightId}/waypoints/batch`,
@@ -142,19 +139,32 @@ const NovoVoo = () => {
         <Polyline coordinates={gridPoints} strokeWidth={2} strokeColor="blue" />
       </MapView>
 
-      <TouchableOpacity style={styles.clearButton} onPress={clearPoints}>
-        <Text style={styles.clearButtonText}>Limpar Pontos</Text>
-      </TouchableOpacity>
+      <View style={styles.containerButtons}>
+        <TouchableOpacity
+          style={[styles.clearButton, {backgroundColor: 'red'}]}
+          onPress={clearPoints}>
+          <Text style={styles.clearButtonText}>Limpar Pontos</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity style={styles.generateButton} onPress={generatePath}>
-        <Text style={styles.clearButtonText}>Gerar Caminho</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.clearButton, {backgroundColor: '#F6C500'}]}
+          onPress={generatePath}>
+          <Text style={styles.clearButtonText}>Gerar Caminho</Text>
+        </TouchableOpacity>
+      </View>
 
-      <TouchableOpacity
-        style={[styles.clearButton, {right: 10}]}
-        onPress={() => registrarVoo()}>
-        <Text style={styles.clearButtonText}>Enviar Caminho</Text>
-      </TouchableOpacity>
+      {gridPoints.length > 0 && (
+        <View style={styles.containerRegister}>
+          <TouchableOpacity
+            style={[
+              styles.clearButton,
+              {backgroundColor: 'black', width: '100%'},
+            ]}
+            onPress={() => registrarVoo()}>
+            <Text style={styles.clearButtonText}>Enviar Caminho</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };
@@ -164,20 +174,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   map: {
-    flex: 1,
+    position: 'absolute',
+    height: '100%',
+    width: '100%',
   },
   clearButton: {
-    position: 'absolute',
-    bottom: 20,
-    alignSelf: 'right',
-    backgroundColor: 'red',
     padding: 10,
     borderRadius: 5,
   },
   generateButton: {
-    position: 'absolute',
     bottom: 20,
-    alignSelf: 'center',
     backgroundColor: 'blue',
     padding: 10,
     borderRadius: 5,
@@ -186,19 +192,28 @@ const styles = StyleSheet.create({
   clearButtonText: {
     color: 'white',
     fontWeight: 'bold',
+    fontFamily: 'AveriaLibre-Regular',
+    fontSize: 15,
   },
 
-  pickerContainer: {
-    position: 'absolute',
-    top: 20,
-    right: 10,
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    borderRadius: 5,
-    width: 150,
+  containerButtons: {
+    display: 'flex',
+    flexDirection: 'row',
+    flex: 0.08,
+    width: '100%',
+    paddingHorizontal: '5%',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
-  picker: {
-    color: 'white',
-    height: 40,
+
+  containerRegister: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 30,
+    paddingHorizontal: '34%',
+    alignItems: 'center',
   },
 });
 

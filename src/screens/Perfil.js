@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {View, TouchableOpacity, StyleSheet, Text, Image} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import Menu from '../components/Menu';
+import {useNavigation, useIsFocused} from '@react-navigation/native';
 import Botao from '../components/Botao';
 import {useSelector} from 'react-redux';
 import moment from 'moment';
@@ -10,9 +9,17 @@ import 'moment/locale/pt-br';
 const Perfil = () => {
   const [modalVisible, setModalVisible] = useState(false);
 
+  const navigation = useNavigation();
+
+  const isFocused = useIsFocused();
+
   const user = useSelector(state => state.user);
 
   const dataIngresso = moment(user.createdAt).format('DD/MM/YYYY');
+
+  irParaEditar = () => {
+    navigation.navigate('EditarUsuario');
+  };
 
   return (
     <View style={st.container}>
@@ -42,8 +49,8 @@ const Perfil = () => {
         </View>
       </View>
 
-      <View style={st.containerEntrar}>
-        <Botao texto="Editar" />
+      <View style={st.containerEditar}>
+        <Botao texto="Editar" funcao={irParaEditar} />
       </View>
     </View>
   );
@@ -113,7 +120,7 @@ const st = StyleSheet.create({
     color: '#515151',
   },
 
-  containerEntrar: {
+  containerEditar: {
     display: 'flex',
     width: '100%',
     paddingHorizontal: '15%',

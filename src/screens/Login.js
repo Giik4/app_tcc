@@ -12,6 +12,7 @@ import api from '../services/Api';
 import {useDispatch} from 'react-redux';
 import {setUser} from '../redux/userSlice';
 import {setAuth} from '../redux/authSlice';
+import {fetchUser} from '../redux/userSlice';
 
 const Login = props => {
   const irParaNovaConta = () => {
@@ -43,37 +44,18 @@ const Login = props => {
         },
       });
 
-      const responseUser = await api.get('/users/', {
-        headers: {
-          Authorization: `Bearer ${responseAuth.data.access_token}`,
-        },
-      });
-
-      dispatch(
-        setUser({
-          username: responseUser.data.username,
-          email: responseUser.data.email,
-          name: responseUser.data.name,
-          id: responseUser.data.id,
-          createdAt: responseUser.data.created_at,
-        }),
-      );
-
       dispatch(
         setAuth({
           token: responseAuth.data.access_token,
-          refreshToken: responseAuth.data.refresh_token,
-          expiresIn: responseAuth.data.expires_in,
+          tokenType: responseAuth.data.token_type,
         }),
       );
     } catch (error) {
-      console.error(
-        'Erro ao fazer login:',
-        error.response?.data || error.message,
-      );
+      setAviso(error.response?.data.detail || error.message);
       throw error;
     }
 
+    dispatch(fetchUser());
     irParaHome();
   }
 

@@ -11,13 +11,18 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useNavigation} from '@react-navigation/native';
 import Menu from '../components/Menu';
 import CardPlantacao from '../components/CardPlantacao';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
+import {adicionarAcesso} from '../redux/recentesSlice';
 
 const Inicio = props => {
   const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const user = useSelector(state => state.user);
+  const acessosRecentes = useSelector(state => state.recentes.acessos || []);
+
+  console.log('Acessos recentes:', acessosRecentes);
 
   return (
     <View style={st.container}>
@@ -31,31 +36,24 @@ const Inicio = props => {
       <Text style={st.acesso}>Acesso Recente</Text>
 
       {/* Cards */}
-      <ScrollView
-        vertical={true}
-        contentContainerStyle={st.containerCards}
-        showsVerticalScrollIndicator={false}>
-        <CardPlantacao
-          onPress={() => navigation.navigate('Plantacao')}
-          image={require('../../assets/images/soja.jpg')}
-          titulo="Soja"
-          coordenada="-41.876167, 0.984000"
-        />
-
-        <CardPlantacao
-          onPress={() => navigation.navigate('Plantacao')}
-          image={require('../../assets/images/Cafe.jpg')}
-          titulo="Café"
-          coordenada="-41.886567, 0.983090"
-        />
-
-        <CardPlantacao
-          onPress={() => navigation.navigate('Plantacao')}
-          image={require('../../assets/images/Trigo.jpg')}
-          titulo="Trigo"
-          coordenada="-41.815127, 0.987521"
-        />
-      </ScrollView>
+      {Array.isArray(acessosRecentes) && acessosRecentes.length > 0 ? (
+        acessosRecentes.map(p => (
+          <CardPlantacao
+            key={p.id}
+            nome={p.name}
+            latitude={p.latitude}
+            longitude={p.longitude}
+            onPress={() => {
+              dispatch(adicionarAcesso(p)); // se quiser adicionar de novo
+              navigation.navigate('Plantacao', {item: p});
+            }}
+          />
+        ))
+      ) : (
+        <Text style={{marginLeft: 10, color: 'gray'}}>
+          Nenhum acesso recente
+        </Text>
+      )}
     </View>
   );
 };

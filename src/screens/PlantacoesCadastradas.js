@@ -15,6 +15,7 @@ import {fetchPlantations} from '../redux/plantationSlice';
 import {useSelector, useDispatch} from 'react-redux';
 import {FlatList} from 'react-native-gesture-handler';
 import {useFocusEffect} from '@react-navigation/native';
+import {adicionarAcesso} from '../redux/recentesSlice';
 
 const PlantacoesCadastradas = props => {
   const dispatch = useDispatch();
@@ -57,7 +58,10 @@ const PlantacoesCadastradas = props => {
               nome={item.name}
               latitude={item.latitude}
               longitude={item.longitude}
-              onPress={() => navigation.navigate('Plantacao', {item})}
+              onPress={() => {
+                dispatch(adicionarAcesso(item));
+                navigation.navigate('Plantacao', {item});
+              }}
             />
           )}
           keyExtractor={item => item.id}
