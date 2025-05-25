@@ -21,8 +21,13 @@ const recentesSlice = createSlice({
     limparAcessos: state => {
       state.acessos = [];
     },
+    filtrarAcessosInvalidos: (state, action) => {
+      const idsValidos = action.payload;
+      state.acessos = state.acessos.filter(p => idsValidos.includes(p.id));
+    },
   },
 });
 
-export const {adicionarAcesso, limparAcessos} = recentesSlice.actions;
+export const {adicionarAcesso, limparAcessos, filtrarAcessosInvalidos} =
+  recentesSlice.actions;
 export default recentesSlice.reducer;

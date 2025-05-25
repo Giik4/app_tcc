@@ -28,16 +28,6 @@ const PlantacoesCadastradas = props => {
     }, [dispatch]),
   );
 
-  if (loading) {
-    return <Text>Carregando...</Text>;
-  }
-  if (error) {
-    return <Text>Erro ao carregar plantações</Text>;
-  }
-  if (list.lenght === 0) {
-    return <Text>Não há plantações cadastradas</Text>;
-  }
-
   return (
     <View style={st.container}>
       <View style={st.cabecalho}>
@@ -51,22 +41,31 @@ const PlantacoesCadastradas = props => {
       {/* Cards */}
 
       <View style={st.containerCards}>
-        <FlatList
-          data={list}
-          renderItem={({item}) => (
-            <CardPlantacao
-              nome={item.name}
-              latitude={item.latitude}
-              longitude={item.longitude}
-              onPress={() => {
-                dispatch(adicionarAcesso(item));
-                navigation.navigate('Plantacao', {item});
-              }}
-            />
-          )}
-          keyExtractor={item => item.id}
-          vertical={true}
-        />
+        {loading ? (
+          <Text style={st.textoInicial}>Carregando...</Text>
+        ) : error ? (
+          <Text style={st.textoInicial}>Erro ao carregar plantações</Text>
+        ) : list.length === 0 ? (
+          <Text style={st.textoInicial}>Não há plantações cadastradas</Text>
+        ) : (
+          <FlatList
+            data={list}
+            renderItem={({item}) => (
+              <CardPlantacao
+                nome={item.name}
+                latitude={item.latitude}
+                longitude={item.longitude}
+                id={item.id}
+                onPress={() => {
+                  dispatch(adicionarAcesso(item));
+                  navigation.navigate('Plantacao', {item});
+                }}
+              />
+            )}
+            keyExtractor={item => item.id.toString()}
+            vertical={true}
+          />
+        )}
       </View>
     </View>
   );
@@ -107,16 +106,12 @@ const st = StyleSheet.create({
     paddingHorizontal: '2%',
   },
 
-  barraPesquisa: {
-    backgroundColor: 'white',
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 1,
-    height: '12%',
-    width: '95%',
-    marginBottom: 10,
-    paddingLeft: 10,
+  textoInicial: {
+    marginLeft: 10,
+    color: 'gray',
+    fontSize: 18,
   },
+
   input: {
     flex: 1,
     paddingBottom: 7,

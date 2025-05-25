@@ -1,16 +1,20 @@
-import React from 'react'
-import { View, TouchableOpacity, StyleSheet, Image, Text } from 'react-native'
+import React from 'react';
+import {View, TouchableOpacity, StyleSheet, Image, Text} from 'react-native';
+import moment from 'moment';
+import 'moment/locale/pt-br';
 
-const CardPlantacao = ({onPress, image, data }) => {
-    return(
-      <TouchableOpacity onPress={onPress}>
+const CardPlantacao = ({onPress, image, data}) => {
+  const dataVoo = moment(data).format('DD/MM/YYYY HH:mm');
+
+  return (
+    <TouchableOpacity onPress={onPress}>
       <View style={st.card}>
-          <Image source={image} style={st.image} resizeMode='cover'/>
-          <Text style={st.textoData}>{data}</Text>
+        <Image source={image} style={st.image} resizeMode="cover" />
+        <Text style={st.textoData}>{dataVoo}</Text>
       </View>
-  </TouchableOpacity>
-    )
-}
+    </TouchableOpacity>
+  );
+};
 
 const st = StyleSheet.create({
   card: {
@@ -20,19 +24,19 @@ const st = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 40
+    marginRight: 40,
   },
   image: {
-    height: 80, 
-    width: 100,
-    borderRadius: 10 
+    height: '100%',
+    aspectRatio: 1,
+    borderRadius: 5,
   },
-  
+
   textoData: {
     fontFamily: 'RobotoCondensed-Regular',
     fontSize: 18,
-    color: 'black'
+    color: 'black',
   },
-})
+});
 
-export default CardPlantacao
+export default CardPlantacao;

@@ -69,5 +69,5 @@ const flightSlice = createSlice({
   },
 });
 
-export const {clearFlights} = flightSlice.actions;
+export const {clearFlight} = flightSlice.actions;
 export default flightSlice.reducer;

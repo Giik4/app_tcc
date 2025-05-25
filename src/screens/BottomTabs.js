@@ -13,37 +13,6 @@ import {useSelector} from 'react-redux';
 const Tab = createBottomTabNavigator();
 
 const BottomTabs = props => {
-  // const [listaPlantations, setListaPlantations] = useState([]);
-
-  // async function getPlantations() {
-  //   try {
-  //     const response = await api.get('/plantations/list', {
-  //       headers: {
-  //         Authorization: `Bearer ${useSelector(state => state.token.token)}`,
-  //       },
-  //     });
-
-  //     console.log(response.data);
-
-  //     const listaPlantations = response.data.map(plantation => ({
-  //       id: plantation.id,
-  //       name: plantation.name,
-  //       crop: plantation.crop,
-  //       latitude: plantation.latitude,
-  //       longitude: plantation.longitude,
-  //       seed: plantation.seed,
-  //       description: plantation.description,
-  //       datePlanted: plantation.date_planted,
-  //       createdAt: plantation.created_at,
-  //       updatedAt: plantation.updated_at,
-  //     }));
-
-  //     setListaPlantations(listaPlantations);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }
-
   return (
     <Tab.Navigator
       screenOptions={{

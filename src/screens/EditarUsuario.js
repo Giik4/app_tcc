@@ -1,7 +1,6 @@
 import {
   View,
   TouchableOpacity,
-  Pressable,
   TextInput,
   Text,
   StyleSheet,
@@ -13,6 +12,8 @@ import {useState} from 'react';
 import api from '../services/Api';
 import {useSelector, useDispatch} from 'react-redux';
 import {fetchUser} from '../redux/userSlice';
+import {launchImageLibrary} from 'react-native-image-picker';
+import {Image} from 'react-native';
 
 const EditarUsuario = props => {
   const user = useSelector(state => state.user);
@@ -26,6 +27,7 @@ const EditarUsuario = props => {
   const [senha, setSenha] = useState('');
   const [confSenha, setConfSenha] = useState('');
   const [aviso, setAviso] = useState('');
+  const [imagem, setImagem] = useState(null);
   const regexEmail = /^[A-Za-z0-9.+_-]+@[A-Za-z0-9.-]+\.[a-z]{2,}$/;
 
   const limparCampos = () => {
@@ -34,26 +36,63 @@ const EditarUsuario = props => {
     setEmail('');
     setSenha('');
     setConfSenha('');
+    setImagem(null);
+  };
+
+  const selecionarImagem = () => {
+    const options = {
+      mediaType: 'photo',
+      quality: 1,
+    };
+
+    launchImageLibrary(options, response => {
+      if (response.didCancel) {
+        console.log('Usuário cancelou a seleção de imagem');
+      } else if (response.errorCode) {
+        console.log('Erro ao selecionar imagem:', response.errorMessage);
+      } else {
+        const asset = response.assets[0];
+        setImagem(asset);
+      }
+    });
   };
 
   const atualizar = async () => {
     try {
       const payload = {};
 
+      console.log('URL', api.defaults.baseURL + '/users/image');
+
       if (nome.trim() !== '') payload.name = nome;
       if (username.trim() !== '') payload.username = username;
       if (email.trim() !== '') payload.email = email;
       if (senha.trim() !== '') payload.password = senha;
 
-      if (Object.keys(payload).length === 0) {
-        return;
+      if (imagem) {
+        const formData = new FormData();
+        formData.append('file', {
+          uri: imagem.uri,
+          type: imagem.type,
+          name: imagem.fileName,
+        });
+
+        const resImg = await api.post(`/users/image`, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        console.log('Imagem de perfil enviada:', resImg.data);
       }
 
-      const res = await api.patch(`/users/${user.id}`, payload, {
-        headers: {Authorization: `Bearer ${token}`},
-      });
+      if (Object.keys(payload).length !== 0) {
+        const res = await api.patch(`/users/${user.id}`, payload, {
+          headers: {Authorization: `Bearer ${token}`},
+        });
 
-      console.log(res.data);
+        console.log(res.data);
+      }
 
       limparCampos();
       dispatch(fetchUser());
@@ -70,9 +109,20 @@ const EditarUsuario = props => {
   };
 
   const verifica = () => {
-    if (email.trim() !== '' && regexEmail.test(email) == false) {
+    if (
+      nome.trim() === '' &&
+      username.trim() === '' &&
+      email.trim() === '' &&
+      senha.trim() === '' &&
+      !imagem
+    ) {
+      setAviso('Preencha pelo menos um campo para atualizar');
+      return;
+    }
+
+    if (email.trim() !== '' && regexEmail.test(email) === false) {
       setAviso('E-mail inválido');
-    } else if (senha.trim() !== '' && senha != confSenha) {
+    } else if (senha.trim() !== '' && senha !== confSenha) {
       setAviso('As senhas inseridas são diferentes');
     } else {
       setAviso('');
@@ -89,6 +139,7 @@ const EditarUsuario = props => {
             style={estilos.textInput}
             value={nome}
             onChangeText={setNome}
+            placeholder={user.name}
           />
         </View>
 
@@ -135,8 +186,15 @@ const EditarUsuario = props => {
 
         <View style={estilos.caixaDeTexto}>
           <Text style={estilos.texto}>Foto</Text>
-          <TouchableOpacity style={estilos.foto}>
-            <Icon name="upload" size={70} color="black" />
+          <TouchableOpacity style={estilos.foto} onPress={selecionarImagem}>
+            {imagem ? (
+              <Image
+                source={{uri: imagem.uri}}
+                style={{width: 100, height: 100, borderRadius: 5}}
+              />
+            ) : (
+              <Icon name="upload" size={70} color="black" />
+            )}
           </TouchableOpacity>
         </View>
       </View>
@@ -188,7 +246,7 @@ const estilos = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-start',
-    width: '80%',
+    width: '85%',
     flex: 0.5,
     marginBottom: '1%',
   },
@@ -212,16 +270,16 @@ const estilos = StyleSheet.create({
   },
   textInput: {
     paddingBottom: 4,
-    fontSize: 16,
-    backgroundColor: '#E5E5E5',
+    fontSize: 18,
+    backgroundColor: '#DEDDF6',
     width: '100%',
     fontFamily: 'AveriaLibre-Regular',
-    height: '62.5%',
+    height: '55%',
     borderRadius: 5,
   },
 
   foto: {
-    backgroundColor: '#E5E5E5',
+    backgroundColor: '#DEDDF6',
     width: '40%',
     alignItems: 'center',
     borderRadius: 5,

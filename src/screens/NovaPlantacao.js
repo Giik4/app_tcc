@@ -1,20 +1,22 @@
 import {
   View,
   TouchableOpacity,
-  Pressable,
   TextInput,
   Text,
   StyleSheet,
   ScrollView,
 } from 'react-native';
 import Botao from '../components/Botao';
-import Header from '../components/Header';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useState} from 'react';
 import api from '../services/Api';
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
-import {fetchPlantations} from '../redux/plantationSlice';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import moment from 'moment';
+import 'moment/locale/pt-br';
+import {launchImageLibrary} from 'react-native-image-picker';
+import {Image} from 'react-native';
 
 const NovaPlantacao = props => {
   const [nome, setNome] = useState('');
@@ -22,8 +24,29 @@ const NovaPlantacao = props => {
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   const [semente, setSemente] = useState('');
-  const [dataPlantio, setDataPlantio] = useState(null);
+  const [dataPlantio, setDataPlantio] = useState('');
   const [descricao, setDescricao] = useState('');
+  const [imagem, setImagem] = useState(null);
+
+  const selecionarImagem = () => {
+    const options = {
+      mediaType: 'photo',
+      quality: 1,
+    };
+
+    launchImageLibrary(options, response => {
+      if (response.didCancel) {
+        console.log('Usuário cancelou a seleção de imagem');
+      } else if (response.errorCode) {
+        console.log('Erro ao selecionar imagem:', response.errorMessage);
+      } else {
+        const asset = response.assets[0];
+        setImagem(asset);
+      }
+    });
+  };
+
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const dispatch = useDispatch();
   const token = useSelector(state => state.auth.token);
@@ -36,38 +59,81 @@ const NovaPlantacao = props => {
     setSemente('');
     setDataPlantio(null);
     setDescricao('');
+    setImagem(null);
   };
 
   const cadastrar = async () => {
     if (nome === '' || cultura === '' || latitude === '' || longitude === '') {
       alert('Preencha todos os campos obrigatórios!');
-    } else {
-      try {
-        const res = await api.post(
-          '/plantations/',
+      return;
+    }
+
+    try {
+      const isoDate = dataPlantio
+        ? moment(dataPlantio, 'DD/MM/YYYY').format('YYYY-MM-DD')
+        : null;
+
+      // 1. Envia os dados da nova plantação
+      const res = await api.post(
+        '/plantations/',
+        {
+          name: nome,
+          crop: cultura,
+          latitude: latitude,
+          longitude: longitude,
+          seed: semente,
+          description: descricao,
+          date_planted: isoDate,
+        },
+        {
+          headers: {Authorization: `Bearer ${token}`},
+        },
+      );
+
+      const plantacaoId = res.data?.id;
+
+      console.log('Plantação cadastrada com ID:', plantacaoId);
+
+      // 2. Se houver imagem, envia para /plantations/image/{id}
+      if (imagem && plantacaoId) {
+        const formData = new FormData();
+        formData.append('file', {
+          uri: imagem.uri,
+          type: imagem.type,
+          name: imagem.fileName,
+        });
+
+        const resImg = await api.post(
+          `/plantations/image/${plantacaoId}`,
+          formData,
           {
-            name: nome,
-            crop: cultura,
-            latitude: latitude,
-            longitude: longitude,
-            seed: semente,
-            description: descricao,
-            date_planted: dataPlantio,
-          },
-          {
-            headers: {Authorization: `Bearer ${token}`},
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data',
+            },
           },
         );
-        console.log(res.data);
-        limparCampos();
-        alert('Plantação cadastrada com sucesso!');
-      } catch (error) {
-        console.log(error);
-        alert('Erro ao cadastrar a plantação!/n' + error.message);
+
+        console.log('Imagem da plantação enviada:', resImg.data);
       }
+
+      limparCampos();
+      alert('Plantação cadastrada com sucesso!');
+    } catch (error) {
+      console.log(error.response?.data || error.message);
+      alert('Erro ao cadastrar a plantação:\n' + error.message);
     }
   };
 
+  const onChangeDate = (event, selectedDate) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      const formatted = moment(selectedDate)
+        .locale('pt-br')
+        .format('DD/MM/YYYY');
+      setDataPlantio(formatted);
+    }
+  };
   return (
     <View style={estilos.tela}>
       <ScrollView
@@ -109,6 +175,7 @@ const NovaPlantacao = props => {
             onChangeText={setLongitude}
           />
         </View>
+
         <View style={estilos.caixaDeTexto}>
           <Text style={estilos.texto}>Semente</Text>
           <TextInput
@@ -124,7 +191,18 @@ const NovaPlantacao = props => {
             style={estilos.textInput}
             value={dataPlantio}
             onChangeText={setDataPlantio}
+            onFocus={() => setShowDatePicker(true)}
           />
+
+          {showDatePicker && (
+            <DateTimePicker
+              value={new Date()}
+              mode="date"
+              display="default"
+              onChange={onChangeDate}
+              locale="pt-BR"
+            />
+          )}
         </View>
 
         <View style={estilos.caixaDescricao}>
@@ -140,8 +218,15 @@ const NovaPlantacao = props => {
 
         <View style={estilos.caixaDeTexto}>
           <Text style={estilos.texto}>Foto</Text>
-          <TouchableOpacity style={estilos.foto}>
-            <Icon name="upload" size={70} color="black" />
+          <TouchableOpacity style={estilos.foto} onPress={selecionarImagem}>
+            {imagem ? (
+              <Image
+                source={{uri: imagem.uri}}
+                style={{width: 100, height: 100, borderRadius: 5}}
+              />
+            ) : (
+              <Icon name="upload" size={70} color="black" />
+            )}
           </TouchableOpacity>
         </View>
 
@@ -235,8 +320,8 @@ const estilos = StyleSheet.create({
   },
   textInput: {
     paddingBottom: 4,
-    fontSize: 16,
-    backgroundColor: '#E5E5E5',
+    fontSize: 18,
+    backgroundColor: '#DEDDF6',
     width: '100%',
     fontFamily: 'Roboto-Regular',
     height: '62.5%',
@@ -244,7 +329,7 @@ const estilos = StyleSheet.create({
   },
 
   foto: {
-    backgroundColor: '#E5E5E5',
+    backgroundColor: '#DEDDF6',
     width: '40%',
     alignItems: 'center',
     borderRadius: 5,

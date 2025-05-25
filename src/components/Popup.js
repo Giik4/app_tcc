@@ -30,11 +30,11 @@ const Popup = ({modalVisible, setModalVisible, onConfirm, text}) => {
 
           <View style={styles.modalButtonsContainer}>
             <TouchableOpacity style={styles.buttonSim} onPress={botaoSim}>
-              <Text style={styles.buttonText}>SIM</Text>
+              <Text style={styles.buttonText}>Sim</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.buttonCancelar} onPress={botaoNao}>
-              <Text style={styles.buttonText}>CANCELAR</Text>
+              <Text style={styles.buttonText}>Cancelar</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -53,24 +53,28 @@ const styles = StyleSheet.create({
   modalContent: {
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: '#2B1F5C',
-    padding: 20,
-    borderRadius: 2,
+    justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#F6F6F6',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    width: '90%',
   },
   modalTitle: {
     fontSize: 20,
     marginBottom: 20,
-    color: 'white',
-    fontFamily: 'AveriaLibre-Regular',
+    color: 'black',
+    fontFamily: 'Roboto-Regular',
     textAlign: 'center',
     flexWrap: 'wrap',
-    maxWidth: '40%',
+    maxWidth: '90%',
   },
   modalButtonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '30%',
+    width: '50%',
+    justifyContent: 'center',
   },
   buttonSim: {
     backgroundColor: '#FF8383',
@@ -82,7 +86,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   buttonCancelar: {
-    backgroundColor: '#3F92C5',
+    backgroundColor: 'black',
     paddingVertical: 8,
     paddingHorizontal: 5,
     borderRadius: 1,
@@ -91,8 +95,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: 22,
-    fontFamily: 'AveriaLibre-Regular',
+    fontSize: 20,
+    fontFamily: 'Roboto-Regular',
     textAlign: 'center',
   },
 });

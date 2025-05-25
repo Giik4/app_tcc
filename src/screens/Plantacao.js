@@ -1,8 +1,7 @@
-import {useCallback} from 'react';
+import {useCallback, useState} from 'react';
 import {
   View,
   TouchableOpacity,
-  Image,
   Text,
   StyleSheet,
   ScrollView,
@@ -15,16 +14,42 @@ import CardVoo from '../components/CardVoo';
 import {useRoute} from '@react-navigation/native';
 import {FlatList} from 'react-native-gesture-handler';
 import {useFocusEffect} from '@react-navigation/native';
-import {center} from '@turf/turf';
-import {fetchPlantations} from '../redux/plantationSlice';
+import Popup from '../components/Popup';
+import {API_URL} from '@env';
+import api from '../services/Api';
+import FastImage from 'react-native-fast-image';
+import moment from 'moment';
+import 'moment/locale/pt-br';
 
 const Plantacao = props => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const {list, loading, error} = useSelector(state => state.flight);
+  const [modalVisible, setModalVisible] = useState(false);
+  const token = useSelector(state => state.auth.token);
 
   const route = useRoute();
   const {item} = route.params;
+
+  const imageUrl = `${API_URL}/plantations/image/${item.id}?t=${Date.now()}`;
+
+  formatDate = date => {
+    const data = moment(date).format('DD/MM/YYYY');
+    return data;
+  };
+
+  const excluirPlantacao = async () => {
+    try {
+      await api.delete(`/plantations/${item.id}`, {
+        headers: {Authorization: `Bearer ${token}`},
+      });
+      setModalVisible(false);
+      props.navigation.pop();
+    } catch (error) {
+      console.log(error);
+      alert('Erro ao excluir voo:\n', error.response?.data || error.message);
+    }
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -39,23 +64,41 @@ const Plantacao = props => {
         style={estilos.scrollVert}
         contentContainerStyle={estilos.containerPlant}>
         <View style={estilos.cabecalho}>
-          <Image
-            source={require('../../assets/images/soja.jpg')}
+          <FastImage
             style={estilos.image}
-            resizeMode="cover"
+            source={{
+              uri: imageUrl,
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+              priority: FastImage.priority.normal,
+            }}
+            resizeMode={FastImage.resizeMode.cover}
           />
           <Text style={estilos.nome}>{item.name}</Text>
         </View>
 
         <Text style={estilos.informacoes}>Voos</Text>
 
-        <View style={estilos.voosContainer}>
+        <View style={estilos.scrollHorizontal}>
           {loading ? (
             <Text>Carregando voos...</Text>
           ) : error ? (
             <Text>Erro ao carregar voos: {error}</Text>
           ) : list.length === 0 ? (
-            <Text>Não há voos cadastrados.</Text>
+            <View style={estilos.containerVoo}>
+              <TouchableOpacity
+                style={estilos.novoVoo}
+                onPress={() => navigation.navigate('NovoVoo', item)}>
+                <Icon
+                  style={{marginTop: 0}}
+                  name="plus"
+                  size={65}
+                  color="black"
+                />
+                <Text style={estilos.textoNovoVoo}>Novo Voo</Text>
+              </TouchableOpacity>
+            </View>
           ) : (
             <FlatList
               ListHeaderComponent={
@@ -75,6 +118,7 @@ const Plantacao = props => {
               }
               horizontal={true}
               data={list}
+              showsHorizontalScrollIndicator={false}
               renderItem={({item}) => (
                 <CardVoo
                   onPress={() => navigation.navigate('Voo', {item})}
@@ -118,17 +162,19 @@ const Plantacao = props => {
 
           <View>
             <Text style={estilos.titulo}>Data de plantio</Text>
-            <Text style={estilos.atributo}>{item.datePlanted}</Text>
+            <Text style={estilos.atributo}>
+              {item.datePlanted ? formatDate(item.datePlanted) : ''}
+            </Text>
           </View>
 
           <View>
             <Text style={estilos.titulo}>Última atualização</Text>
-            <Text style={estilos.atributo}>{item.updatedAt}</Text>
+            <Text style={estilos.atributo}>{formatDate(item.updatedAt)}</Text>
           </View>
 
           <View>
             <Text style={estilos.titulo}>Criado em</Text>
-            <Text style={estilos.atributo}>{item.createdAt}</Text>
+            <Text style={estilos.atributo}>{formatDate(item.createdAt)}</Text>
           </View>
         </View>
 
@@ -138,12 +184,20 @@ const Plantacao = props => {
             <Icon name="pencil" size={60} color="black" />
             <Text style={estilos.texto}>Editar</Text>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => setModalVisible(true)}>
             <Icon name="delete" size={60} color="black" />
             <Text style={estilos.texto}>Deletar</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      <Popup
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        navigation={props.navigation}
+        onConfirm={() => excluirPlantacao()}
+        text={`${item.name} e seus voos`}
+      />
     </View>
   );
 };
@@ -237,8 +291,8 @@ const estilos = StyleSheet.create({
     gap: 15,
   },
 
-  scrollHori: {
-    height: 130,
+  scrollHorizontal: {
+    height: '10%',
   },
 
   containerVoo: {

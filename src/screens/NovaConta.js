@@ -117,13 +117,6 @@ const NovaConta = props => {
             onChangeText={setConfSenha}
           />
         </View>
-
-        <View style={estilos.caixaDeTexto}>
-          <Text style={estilos.texto}>Foto</Text>
-          <TouchableOpacity style={estilos.foto}>
-            <Icon name="upload" size={70} color="black" />
-          </TouchableOpacity>
-        </View>
       </View>
       <Text style={estilos.warning}>{aviso}</Text>
       <View style={estilos.containerEntrar}>
@@ -173,7 +166,7 @@ const estilos = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-start',
-    width: '80%',
+    width: '85%',
     flex: 0.5,
     marginBottom: '1%',
   },
@@ -197,11 +190,11 @@ const estilos = StyleSheet.create({
   },
   textInput: {
     paddingBottom: 4,
-    fontSize: 16,
-    backgroundColor: '#E5E5E5',
+    fontSize: 18,
+    backgroundColor: '#DEDDF6',
     width: '100%',
     fontFamily: 'AveriaLibre-Regular',
-    height: '62.5%',
+    height: '55%',
     borderRadius: 5,
   },
 

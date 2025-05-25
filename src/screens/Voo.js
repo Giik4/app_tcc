@@ -6,13 +6,14 @@ import {
   Text,
   StyleSheet,
   ScrollView,
+  Alert,
 } from 'react-native';
 import Botao from '../components/Botao';
 import Header from '../components/Header';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useEffect, useState} from 'react';
-import CardVoo from '../components/CardVoo';
-import Menu from '../components/Menu';
+import moment from 'moment';
+import 'moment/locale/pt-br';
 import CardCaptura from '../components/CardCaptura';
 import {useRoute} from '@react-navigation/native';
 import api from '../services/Api';
@@ -26,9 +27,19 @@ const Voo = props => {
   const token = useSelector(state => state.auth.token);
   const [waypoints, setWaypoints] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const dataVoo = moment(item.date).format('DD/MM/YYYY HH:mm');
 
-  const stepSize = 20; // Distância entre linhas em metros
-  const overlap = 0.1; // Sobreposição entre linhas
+  const excluirVoo = async () => {
+    try {
+      await api.delete(`/plantations/${item.plantationId}/flights/${item.id}`, {
+        headers: {Authorization: `Bearer ${token}`},
+      });
+      setModalVisible(false);
+      props.navigation.pop();
+    } catch (error) {
+      alert('Erro ao excluir voo:\n', error.response?.data || error.message);
+    }
+  };
 
   useEffect(() => {
     const fetchWaypoints = async () => {
@@ -79,7 +90,7 @@ const Voo = props => {
 
               <View>
                 <Text style={estilos.titulo}>Data</Text>
-                <Text style={estilos.atributo}>{item.date}</Text>
+                <Text style={estilos.atributo}>{dataVoo}</Text>
               </View>
 
               <View>
@@ -125,7 +136,8 @@ const Voo = props => {
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
         navigation={props.navigation}
-        onConfirm={() => excluirPesquisa()}
+        onConfirm={() => excluirVoo()}
+        text={dataVoo}
       />
     </View>
   );
@@ -141,29 +153,11 @@ const estilos = StyleSheet.create({
     alignItems: 'center',
   },
 
-  cabecalho: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    borderRadius: 1,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    width: '100%',
-    height: 200,
-    paddingVertical: 10,
-  },
-
   informacoes: {
     fontFamily: 'RobotoCondensed-Bold',
     fontSize: 32,
     color: 'black',
+    marginBottom: 10,
   },
 
   containerInfo: {
@@ -173,6 +167,7 @@ const estilos = StyleSheet.create({
     alignItems: 'start',
     width: '100%',
     gap: 5,
+    marginBottom: 10,
   },
 
   titulo: {

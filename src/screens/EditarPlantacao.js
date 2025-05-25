@@ -1,7 +1,6 @@
 import {
   View,
   TouchableOpacity,
-  Pressable,
   TextInput,
   Text,
   StyleSheet,
@@ -16,6 +15,11 @@ import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
 import {useRoute} from '@react-navigation/native';
 import {fetchPlantations} from '../redux/plantationSlice';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import moment from 'moment';
+import 'moment/locale/pt-br';
+import {launchImageLibrary} from 'react-native-image-picker';
+import {Image} from 'react-native';
 
 const EditarPlantacao = props => {
   const route = useRoute();
@@ -28,6 +32,28 @@ const EditarPlantacao = props => {
   const [semente, setSemente] = useState('');
   const [dataPlantio, setDataPlantio] = useState('');
   const [descricao, setDescricao] = useState('');
+
+  const [imagem, setImagem] = useState(null);
+
+  const selecionarImagem = () => {
+    const options = {
+      mediaType: 'photo',
+      quality: 1,
+    };
+
+    launchImageLibrary(options, response => {
+      if (response.didCancel) {
+        console.log('Usuário cancelou a seleção de imagem');
+      } else if (response.errorCode) {
+        console.log('Erro ao selecionar imagem:', response.errorMessage);
+      } else {
+        const asset = response.assets[0];
+        setImagem(asset);
+      }
+    });
+  };
+
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const dispatch = useDispatch();
   const token = useSelector(state => state.auth.token);
@@ -42,6 +68,16 @@ const EditarPlantacao = props => {
     setDescricao('');
   };
 
+  const onChangeDate = (event, selectedDate) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      const formatted = moment(selectedDate)
+        .locale('pt-br')
+        .format('DD/MM/YYYY');
+      setDataPlantio(formatted);
+    }
+  };
+
   const atualizar = async () => {
     try {
       const payload = {};
@@ -52,13 +88,38 @@ const EditarPlantacao = props => {
       if (longitude.trim() !== '') payload.longitude = parseFloat(longitude);
       if (semente.trim() !== '') payload.seed = semente;
       if (descricao.trim() !== '') payload.description = descricao;
-      if (dataPlantio.trim() !== '') payload.date_planted = dataPlantio;
+      if (dataPlantio.trim() !== '')
+        payload.date_planted = moment(dataPlantio, 'DD/MM/YYYY').format(
+          'YYYY-MM-DD',
+        );
 
       const res = await api.patch(`/plantations/${item.id}`, payload, {
         headers: {Authorization: `Bearer ${token}`},
       });
 
       console.log(res.data);
+
+      if (imagem) {
+        const formData = new FormData();
+        formData.append('file', {
+          uri: imagem.uri,
+          type: imagem.type,
+          name: imagem.fileName,
+        });
+
+        const resImg = await api.post(
+          `/plantations/image/${item.id}`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          },
+        );
+
+        console.log('Imagem da plantação enviada:', resImg.data);
+      }
 
       limparCampos();
       dispatch(fetchPlantations);
@@ -132,8 +193,18 @@ const EditarPlantacao = props => {
             style={estilos.textInput}
             value={dataPlantio}
             onChangeText={setDataPlantio}
-            placeholder={item.datePlanted}
+            onFocus={() => setShowDatePicker(true)}
           />
+
+          {showDatePicker && (
+            <DateTimePicker
+              value={new Date()}
+              mode="date"
+              display="default"
+              onChange={onChangeDate}
+              locale="pt-BR"
+            />
+          )}
         </View>
 
         <View style={estilos.caixaDescricao}>
@@ -150,8 +221,15 @@ const EditarPlantacao = props => {
 
         <View style={estilos.caixaDeTexto}>
           <Text style={estilos.texto}>Foto</Text>
-          <TouchableOpacity style={estilos.foto}>
-            <Icon name="upload" size={70} color="black" />
+          <TouchableOpacity style={estilos.foto} onPress={selecionarImagem}>
+            {imagem ? (
+              <Image
+                source={{uri: imagem.uri}}
+                style={{width: 100, height: 100, borderRadius: 5}}
+              />
+            ) : (
+              <Icon name="upload" size={70} color="black" />
+            )}
           </TouchableOpacity>
         </View>
 
@@ -246,7 +324,7 @@ const estilos = StyleSheet.create({
   textInput: {
     paddingBottom: 4,
     fontSize: 16,
-    backgroundColor: '#E5E5E5',
+    backgroundColor: '#DEDDF6',
     width: '100%',
     fontFamily: 'Roboto-Regular',
     height: '62.5%',
@@ -254,7 +332,7 @@ const estilos = StyleSheet.create({
   },
 
   foto: {
-    backgroundColor: '#E5E5E5',
+    backgroundColor: '#DEDDF6',
     width: '40%',
     alignItems: 'center',
     borderRadius: 5,

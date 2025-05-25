@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import {StyleSheet, View, Text, TouchableOpacity, Alert} from 'react-native';
 import api from '../services/Api';
 import MapView, {Polygon, Marker, Polyline} from 'react-native-maps';
 import {createBoustrophedonGrid} from '../geoUtils/boustrophedon';
@@ -7,10 +7,14 @@ import {calculateConvexHull} from '../geoUtils/convexHull';
 import {calculateTotalDistance} from '../geoUtils/calculateTotalDistance';
 import {useRoute} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useNavigation} from '@react-navigation/native';
 
 const NovoVoo = () => {
   const route = useRoute();
   const item = route.params;
+
+  const navigation = useNavigation();
   const [polygonCoordinates, setPolygonCoordinates] = useState([]);
   const [selectedVertexIndex, setSelectedVertexIndex] = useState(null);
   const [gridPoints, setGridPoints] = useState([]);
@@ -28,6 +32,10 @@ const NovoVoo = () => {
   const clearPoints = () => {
     setPolygonCoordinates([]);
     setGridPoints([]);
+  };
+
+  const sair = () => {
+    navigation.goBack();
   };
 
   const generatePath = () => {
@@ -76,10 +84,8 @@ const NovoVoo = () => {
           },
         )
         .then(waypointsResponse => {
-          console.log(
-            'Waypoints cadastrados com sucesso:',
-            waypointsResponse.data,
-          );
+          alert('Waypoints cadastrados com sucesso:', waypointsResponse.data);
+          clearPoints();
         })
         .catch(error => {
           console.error(
@@ -140,8 +146,12 @@ const NovoVoo = () => {
       </MapView>
 
       <View style={styles.containerButtons}>
+        <TouchableOpacity onPress={sair}>
+          <Icon name="exit-to-app" size={40} color="white" />
+        </TouchableOpacity>
+
         <TouchableOpacity
-          style={[styles.clearButton, {backgroundColor: 'red'}]}
+          style={[styles.clearButton, {backgroundColor: '#FF8383'}]}
           onPress={clearPoints}>
           <Text style={styles.clearButtonText}>Limpar Pontos</Text>
         </TouchableOpacity>

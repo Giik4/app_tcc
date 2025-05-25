@@ -1,59 +1,75 @@
-import React, {useState} from 'react';
-import {
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  Text,
-  TextInput,
-  ScrollView,
-} from 'react-native';
+import React, {useState, useCallback} from 'react';
+import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useNavigation} from '@react-navigation/native';
-import Menu from '../components/Menu';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import CardPlantacao from '../components/CardPlantacao';
 import {useSelector, useDispatch} from 'react-redux';
-import {adicionarAcesso} from '../redux/recentesSlice';
+import {
+  adicionarAcesso,
+  filtrarAcessosInvalidos,
+  limparAcessos,
+} from '../redux/recentesSlice';
+import {clearUser} from '../redux/userSlice';
+import {clearPlantations} from '../redux/plantationSlice';
+import {clearFlight} from '../redux/flightSlice';
+import {clearAuth} from '../redux/authSlice';
 
 const Inicio = props => {
-  const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const user = useSelector(state => state.user);
+  const plantations = useSelector(state => state.plantation.list); // <- cuidado aqui!
   const acessosRecentes = useSelector(state => state.recentes.acessos || []);
 
-  console.log('Acessos recentes:', acessosRecentes);
+  const logout = () => {
+    dispatch(limparAcessos());
+    dispatch(clearFlight());
+    dispatch(clearPlantations());
+    dispatch(clearUser());
+    dispatch(clearAuth());
+    props.navigation.popToTop();
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      const idsValidos = plantations.map(p => p.id);
+      dispatch(filtrarAcessosInvalidos(idsValidos));
+    }, [plantations, dispatch]),
+  );
 
   return (
     <View style={st.container}>
       <View style={st.cabecalho}>
         <Text style={st.titulo}>Olá, {user.name}</Text>
-        <TouchableOpacity onPress={() => props.navigation.pop()}>
+        <TouchableOpacity onPress={logout}>
           <Icon name="logout" size={40} color="black" />
         </TouchableOpacity>
       </View>
 
       <Text style={st.acesso}>Acesso Recente</Text>
 
-      {/* Cards */}
-      {Array.isArray(acessosRecentes) && acessosRecentes.length > 0 ? (
-        acessosRecentes.map(p => (
-          <CardPlantacao
-            key={p.id}
-            nome={p.name}
-            latitude={p.latitude}
-            longitude={p.longitude}
-            onPress={() => {
-              dispatch(adicionarAcesso(p)); // se quiser adicionar de novo
-              navigation.navigate('Plantacao', {item: p});
-            }}
-          />
-        ))
-      ) : (
-        <Text style={{marginLeft: 10, color: 'gray'}}>
-          Nenhum acesso recente
-        </Text>
-      )}
+      <View style={st.containerCards}>
+        {Array.isArray(acessosRecentes) && acessosRecentes.length > 0 ? (
+          acessosRecentes.map(p => (
+            <CardPlantacao
+              key={p.id}
+              nome={p.name}
+              latitude={p.latitude}
+              longitude={p.longitude}
+              id={p.id}
+              onPress={() => {
+                dispatch(adicionarAcesso(p));
+                navigation.navigate('Plantacao', {item: p});
+              }}
+            />
+          ))
+        ) : (
+          <Text style={{marginLeft: 10, color: 'gray', fontSize: 18}}>
+            Nenhum acesso recente
+          </Text>
+        )}
+      </View>
     </View>
   );
 };
@@ -88,6 +104,7 @@ const st = StyleSheet.create({
     fontSize: 20,
     color: 'black',
     marginLeft: 10,
+    gap: 5,
   },
 
   containerCards: {

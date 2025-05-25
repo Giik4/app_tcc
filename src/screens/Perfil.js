@@ -1,21 +1,22 @@
 import React, {useState} from 'react';
-import {View, TouchableOpacity, StyleSheet, Text, Image} from 'react-native';
+import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
 import {useNavigation, useIsFocused} from '@react-navigation/native';
 import Botao from '../components/Botao';
 import {useSelector} from 'react-redux';
 import moment from 'moment';
 import 'moment/locale/pt-br';
+import {API_URL} from '@env';
+import FastImage from 'react-native-fast-image';
 
 const Perfil = () => {
   const [modalVisible, setModalVisible] = useState(false);
-
   const navigation = useNavigation();
-
   const isFocused = useIsFocused();
-
   const user = useSelector(state => state.user);
-
+  const token = useSelector(state => state.auth.token);
   const dataIngresso = moment(user.createdAt).format('DD/MM/YYYY');
+  const imageUrl = `${API_URL}/users/image?t=${Date.now()}`;
+  const [imageError, setImageError] = useState(false);
 
   irParaEditar = () => {
     navigation.navigate('EditarUsuario');
@@ -24,11 +25,24 @@ const Perfil = () => {
   return (
     <View style={st.container}>
       <View style={st.cabecalho}>
-        <Image
-          source={require('../../assets/images/eu.png')}
-          style={st.image}
-          resizeMode="cover"
-        />
+        {!imageError ? (
+          <FastImage
+            style={st.image}
+            source={{
+              uri: imageUrl,
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+              priority: FastImage.priority.normal,
+            }}
+            resizeMode={FastImage.resizeMode.cover}
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <View style={st.image}>
+            <Text style={st.textoSemFoto}>Sem foto de perfil</Text>
+          </View>
+        )}
         <Text style={st.nome}>{user.name}</Text>
       </View>
 
@@ -89,7 +103,7 @@ const st = StyleSheet.create({
 
   nome: {
     fontFamily: 'RobotoCondensed-Regular',
-    fontSize: 24,
+    fontSize: 26,
     color: 'black',
   },
 
@@ -97,6 +111,13 @@ const st = StyleSheet.create({
     width: 130,
     height: 130,
     borderRadius: 130 / 2,
+  },
+
+  textoSemFoto: {
+    marginVertical: 'auto',
+    marginHorizontal: 'auto',
+    fontSize: 15,
+    fontWeight: 'bold',
   },
 
   infos: {

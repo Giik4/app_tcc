@@ -1,11 +1,26 @@
 import React from 'react';
 import {View, TouchableOpacity, StyleSheet, Image, Text} from 'react-native';
+import {useSelector} from 'react-redux';
+import {API_URL} from '@env';
+import FastImage from 'react-native-fast-image';
 
-const CardPlantacao = ({onPress, nome, latitude, longitude}) => {
+const CardPlantacao = ({onPress, nome, latitude, longitude, id}) => {
+  const token = useSelector(state => state.auth.token);
+
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={st.card}>
-        {/* <Image source={image} style={st.image} resizeMode='contain'/> */}
+        <FastImage
+          style={st.image}
+          source={{
+            uri: `${API_URL}/plantations/image/${id}/?t=${Date.now()}`,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            priority: FastImage.priority.normal,
+          }}
+          resizeMode={FastImage.resizeMode.cover}
+        />
         <View>
           <Text style={st.tituloCard}>{nome}</Text>
           <Text style={st.textoCoord}>
@@ -32,7 +47,8 @@ const st = StyleSheet.create({
     gap: 20,
   },
   image: {
-    width: 55,
+    height: '90%',
+    aspectRatio: 1,
   },
   tituloCard: {
     fontSize: 20,

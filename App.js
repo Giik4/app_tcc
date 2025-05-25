@@ -13,6 +13,8 @@ import {store} from './src/redux/store';
 import NovoVoo from './src/screens/NovoVoo';
 import EditarPlantacao from './src/screens/EditarPlantacao';
 import EditarUsuario from './src/screens/EditarUsuario';
+import moment from 'moment';
+import 'moment/locale/pt-br';
 
 const Stack = createStackNavigator();
 
@@ -80,7 +82,7 @@ const App = () => {
             name="Voo"
             component={Voo}
             options={({route}) => ({
-              title: route.params.item.date,
+              title: moment(route.params.item.date).format('DD/MM/YYYY HH:mm'),
             })}
           />
           <Stack.Screen

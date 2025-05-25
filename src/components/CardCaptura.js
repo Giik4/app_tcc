@@ -7,7 +7,7 @@ const CardCaptura = ({onPress, image, latitude, longitude, altitude}) => {
       <View style={st.card}>
         <Image source={image} style={st.image} resizeMode="contain" />
         <Text style={st.textoCoord}>
-          {latitude}, {longitude}, {altitude} m
+          {latitude}, {longitude}, {altitude.toFixed(2)} m
         </Text>
       </View>
     </TouchableOpacity>
