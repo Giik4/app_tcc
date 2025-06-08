@@ -5,12 +5,10 @@ import {
   Text,
   StyleSheet,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import Botao from '../components/Botao';
 import {useState} from 'react';
 import api from '../services/Api';
 import {useDispatch} from 'react-redux';
-import {setUser} from '../redux/userSlice';
 import {setAuth} from '../redux/authSlice';
 import {fetchUser} from '../redux/userSlice';
 

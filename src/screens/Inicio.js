@@ -84,6 +84,7 @@ const st = StyleSheet.create({
     flexDirection: 'column',
     gap: 15,
   },
+
   cabecalho: {
     display: 'flex',
     flexDirection: 'row',
@@ -117,35 +118,10 @@ const st = StyleSheet.create({
     paddingHorizontal: '2%',
   },
 
-  barraPesquisa: {
-    backgroundColor: 'white',
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 1,
-    height: '12%',
-    width: '95%',
-    marginBottom: 10,
-    paddingLeft: 10,
-  },
-  input: {
-    flex: 1,
-    paddingBottom: 7,
-    fontFamily: 'AveriaLibre-Regular',
-    fontSize: 18,
-  },
   icon: {
     width: '20%',
     height: '20%',
     marginRight: 5,
-  },
-
-  containerMenu: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'stretch',
-    width: '100%',
-    position: 'absolute',
-    marginTop: '175%',
   },
 });
 

@@ -14,6 +14,5 @@ import Plantacao from './src/screens/Plantacao';
 import Voo from './src/screens/Voo';
 import Inicio from './src/screens/Inicio';
 import NovoVoo from './src/screens/NovoVoo';
-import Teste from './src/screens/Teste';
 
 AppRegistry.registerComponent(appName, () => App);

@@ -17,7 +17,7 @@ export const authSlice = createSlice({
     setAuth: (state, action) => {
       state.token = action.payload.token;
       state.tokenType = action.payload.tokenType;
-      agendarRefresh(action.payload); // inicia agendamento
+      agendarRefresh(action.payload);
     },
 
     clearAuth: state => {
@@ -33,7 +33,7 @@ export default authSlice.reducer;
 export const agendarRefresh = refreshToken => {
   if (refreshTimer) clearTimeout(refreshTimer);
 
-  const tempo = 29 * 60 * 1000; // 29 minutos
+  const tempo = 29 * 60 * 1000;
   console.log('Timer iniciado');
   refreshTimer = setTimeout(async () => {
     try {
@@ -43,7 +43,6 @@ export const agendarRefresh = refreshToken => {
         },
       });
 
-      // Simplesmente atualize o token via dispatch
       window.store.dispatch(
         setAuth({
           token: res.data.access_token,

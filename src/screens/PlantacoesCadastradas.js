@@ -1,13 +1,5 @@
 import React, {useCallback} from 'react';
-import {
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  Text,
-  TextInput,
-  ScrollView,
-  ImageComponent,
-} from 'react-native';
+import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useNavigation} from '@react-navigation/native';
 import CardPlantacao from '../components/CardPlantacao';
@@ -37,8 +29,6 @@ const PlantacoesCadastradas = props => {
           <Icon name="plus" size={40} color="black" />
         </TouchableOpacity>
       </View>
-
-      {/* Cards */}
 
       <View style={st.containerCards}>
         {loading ? (
@@ -81,6 +71,7 @@ const st = StyleSheet.create({
     flexDirection: 'column',
     gap: 15,
   },
+
   cabecalho: {
     display: 'flex',
     flexDirection: 'row',
@@ -112,25 +103,10 @@ const st = StyleSheet.create({
     fontSize: 18,
   },
 
-  input: {
-    flex: 1,
-    paddingBottom: 7,
-    fontFamily: 'AveriaLibre-Regular',
-    fontSize: 18,
-  },
   icon: {
     width: '20%',
     height: '20%',
     marginRight: 5,
-  },
-
-  containerMenu: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'stretch',
-    width: '100%',
-    position: 'absolute',
-    marginTop: '175%',
   },
 });
 

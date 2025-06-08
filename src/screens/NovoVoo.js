@@ -183,18 +183,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+
   map: {
     position: 'absolute',
     height: '100%',
     width: '100%',
   },
+
   clearButton: {
-    padding: 10,
-    borderRadius: 5,
-  },
-  generateButton: {
-    bottom: 20,
-    backgroundColor: 'blue',
     padding: 10,
     borderRadius: 5,
   },

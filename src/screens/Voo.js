@@ -182,49 +182,6 @@ const estilos = StyleSheet.create({
     color: '#515151',
   },
 
-  nome: {
-    fontFamily: 'RobotoCondensed-Regular',
-    fontSize: 24,
-    color: 'black',
-  },
-
-  image: {
-    width: 130,
-    height: 130,
-    borderRadius: 130 / 2,
-  },
-
-  headerContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    height: '5%',
-    //paddingBottom: '2%',
-  },
-  scrollVert: {
-    width: '100%',
-    paddingHorizontal: '4%',
-  },
-
-  containerPlant: {
-    flexDirection: 'column',
-    justifyContent: 'start',
-    alignItems: 'start',
-    width: '100%',
-    gap: 15,
-  },
-
-  scrollHori: {
-    height: 130,
-  },
-
-  containerVoo: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginLeft: '2.5%',
-  },
-
   texto: {
     fontSize: 20,
     color: 'black',
@@ -238,15 +195,6 @@ const estilos = StyleSheet.create({
     justifyContent: 'space-around',
     paddingTop: 50,
     height: 250,
-  },
-
-  containerMenu: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'stretch',
-    width: '100%',
-    position: 'absolute',
-    marginTop: '175%',
   },
 });
 

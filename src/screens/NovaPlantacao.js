@@ -5,6 +5,7 @@ import {
   Text,
   StyleSheet,
   ScrollView,
+  Alert,
 } from 'react-native';
 import Botao from '../components/Botao';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -247,35 +248,20 @@ const estilos = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  headerContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    flex: 0.07,
-    //paddingBottom: '2%',
-  },
+
   scroll: {
     flex: 0.9,
     width: '100%',
     paddingHorizontal: '4%',
     paddingVertical: '2%',
   },
+
   containerCad: {
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  containerBtn: {
-    display: 'flex',
-    flex: 0.2,
-    flexDirection: 'column',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    width: '100%',
-    height: '20%',
-    marginTop: '3%',
-  },
+
   caixaDeTexto: {
     display: 'flex',
     flexDirection: 'column',
@@ -284,6 +270,7 @@ const estilos = StyleSheet.create({
     flex: 0.5,
     marginBottom: '1%',
   },
+
   caixaDescricao: {
     display: 'flex',
     flexDirection: 'column',
@@ -292,16 +279,13 @@ const estilos = StyleSheet.create({
     height: 200,
     flex: 0.5,
   },
+
   texto: {
     fontSize: 18,
     color: 'black',
     fontFamily: 'Roboto-Condensed',
   },
-  warning: {
-    color: 'red',
-    fontSize: 18,
-    fontFamily: 'Roboto-Regular',
-  },
+
   containerEntrar: {
     paddingVertical: '5%',
     display: 'flex',
@@ -309,15 +293,7 @@ const estilos = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-end',
   },
-  descricaoInput: {
-    fontSize: 16,
-    backgroundColor: '#E5E5E5',
-    width: '100%',
-    fontFamily: 'Roboto-Regular',
-    height: '100%',
-    borderRadius: 5,
-    textAlignVertical: 'top',
-  },
+
   textInput: {
     paddingBottom: 4,
     fontSize: 18,
@@ -333,18 +309,6 @@ const estilos = StyleSheet.create({
     width: '40%',
     alignItems: 'center',
     borderRadius: 5,
-  },
-
-  botaoEntrar: {
-    fontSize: 28,
-    //fontWeight: 400,
-    display: 'flex',
-    marginTop: 20,
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    backgroundColor: '#37BD6D',
-    width: '80%',
-    height: '70%',
   },
 });
 

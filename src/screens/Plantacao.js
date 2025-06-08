@@ -270,14 +270,6 @@ const estilos = StyleSheet.create({
     borderRadius: 130 / 2,
   },
 
-  headerContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    height: '5%',
-    //paddingBottom: '2%',
-  },
   scrollVert: {
     width: '100%',
     paddingHorizontal: '4%',
@@ -314,15 +306,6 @@ const estilos = StyleSheet.create({
     justifyContent: 'space-around',
     paddingTop: 50,
     height: 250,
-  },
-
-  containerMenu: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'stretch',
-    width: '100%',
-    position: 'absolute',
-    marginTop: '175%',
   },
 
   novoVoo: {

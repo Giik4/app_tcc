@@ -1,10 +1,5 @@
 import {getDistance} from 'geolib';
 
-/**
- * Calcula a distância total do caminho Boustrophedon gerado
- * @param {Array} grid - Array de pontos [{ latitude, longitude }]
- * @returns {number} Distância total em metros
- */
 export const calculateTotalDistance = grid => {
   let totalDistance = 0;
 

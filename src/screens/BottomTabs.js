@@ -1,14 +1,8 @@
-import {useState} from 'react';
-import {
-  createBottomTabNavigator,
-  createDrawerNavigator,
-} from '@react-navigation/bottom-tabs';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Inicio from './Inicio';
 import Perfil from './Perfil';
 import PlantacoesCadastradas from './PlantacoesCadastradas';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import api from '../services/Api';
-import {useSelector} from 'react-redux';
 
 const Tab = createBottomTabNavigator();
 

@@ -6,8 +6,8 @@ export const fetchPlantations = createAsyncThunk(
   'plantations/fetchAll',
   async (_, {getState, rejectWithValue}) => {
     try {
-      const token = getState().auth.token; // Acessa o token do Redux
-      console.log('Token:', token); // Verifica se o token está sendo acessado corretamente
+      const token = getState().auth.token;
+      console.log('Token:', token);
       const response = await api.get('/plantations/list', {
         headers: {Authorization: `Bearer ${token}`},
       });
@@ -46,7 +46,6 @@ const plantationsSlice = createSlice({
   name: 'plantations',
   initialState,
   reducers: {
-    // Reducer opcional para limpar os dados
     clearPlantations: state => {
       state.list = [];
       state.error = null;

@@ -6,8 +6,8 @@ export const fetchFlights = createAsyncThunk(
   'flight/fetchAll',
   async (plantationId, {getState, rejectWithValue}) => {
     try {
-      const token = getState().auth.token; // Acessa o token do Redux
-      console.log('Token:', token); // Verifica se o token está sendo acessado corretamente
+      const token = getState().auth.token;
+      console.log('Token:', token);
       const response = await api.get(`/plantations/${plantationId}/flights`, {
         headers: {Authorization: `Bearer ${token}`},
       });

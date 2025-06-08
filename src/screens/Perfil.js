@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
-import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
-import {useNavigation, useIsFocused} from '@react-navigation/native';
+import {View, StyleSheet, Text} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 import Botao from '../components/Botao';
 import {useSelector} from 'react-redux';
 import moment from 'moment';
@@ -9,9 +9,7 @@ import {API_URL} from '@env';
 import FastImage from 'react-native-fast-image';
 
 const Perfil = () => {
-  const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
-  const isFocused = useIsFocused();
   const user = useSelector(state => state.user);
   const token = useSelector(state => state.auth.token);
   const dataIngresso = moment(user.createdAt).format('DD/MM/YYYY');
@@ -146,21 +144,6 @@ const st = StyleSheet.create({
     width: '100%',
     paddingHorizontal: '15%',
     justifyContent: 'center',
-  },
-
-  icon: {
-    width: '20%',
-    height: '20%',
-    marginRight: 5,
-  },
-
-  containerMenu: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'stretch',
-    width: '100%',
-    position: 'absolute',
-    marginTop: '175%',
   },
 });
 

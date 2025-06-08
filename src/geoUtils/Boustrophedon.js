@@ -1,10 +1,5 @@
 import {computeDestinationPoint, isPointInPolygon} from 'geolib';
 
-/**
- * Gera uma grade Boustrophedon (vaivém) dentro de um polígono arbitrário.
- * @param {Array} polygonVertices - Lista de vértices [{ latitude, longitude }]
- * @returns {Array} Lista de coordenadas no padrão Boustrophedon
- */
 export const createBoustrophedonGrid = (polygonVertices, stepSize, overlap) => {
   if (polygonVertices.length < 3) return []; // Precisa de pelo menos 3 pontos para formar um polígono
 
@@ -32,7 +27,7 @@ export const createBoustrophedonGrid = (polygonVertices, stepSize, overlap) => {
       if (isPointInPolygon(currentPoint, polygonVertices)) {
         row.push(currentPoint);
       }
-      currentPoint = computeDestinationPoint(currentPoint, stepSize, 90); // 90° → Leste
+      currentPoint = computeDestinationPoint(currentPoint, stepSize, 90); // 90° - Leste
     }
 
     if (!moveRight) row.reverse(); // Inverte direção a cada linha
@@ -41,7 +36,7 @@ export const createBoustrophedonGrid = (polygonVertices, stepSize, overlap) => {
     grid = grid.concat(row);
 
     // Move para a próxima linha para o sul
-    startPoint = computeDestinationPoint(startPoint, stepSizeOverlap, 180); // 180° → Sul
+    startPoint = computeDestinationPoint(startPoint, stepSizeOverlap, 180); // 180° - Sul
   }
 
   return grid;
