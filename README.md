@@ -1,79 +1,116 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Aplicativo de planejamento de caminho de cobertura para VANTS
 
-# Getting Started
+Este aplicativo é voltado para planejamento de caminho de cobertura de Veículos Aéreos não Tripulados e monitoramento de lavouras. Permite a criação de conta, cadastro de plantação e planeja o caminho de cobertura da área delimitada pelo usuário (somente áreas em formato de polígono convexo). Possui integração com banco de dados para salvar informações e manter um histórico.
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
 
-## Step 1: Start the Metro Server
+## 🚀 Funcionalidades
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+- [ ] Multiusuário
+- [ ] Cadastro e login de usuários
+- [ ] Cadastro de plantações
+- [ ] Planejamento de caminho de cobertura de áreas (polígono convexo)
+- [ ] Armazenamento de caminho de cobertura 
+- [ ] Exibição e histórico de informações de plantações e voo
 
-To start Metro, run the following command from the _root_ of your React Native project:
 
+## 🛠️ Tecnologias Utilizadas
+
+- **React Native** - Framework principal
+- **JavaScript** - Linguagem de programação
+- **React Navigation** - Navegação entre telas
+- **React Native CLI** - Plataforma de desenvolvimento
+- **Redux - Thunk** - Gerenciamento de estados globais
+- **Axios** - Requisições HTTP
+- **Geolib** - Funções geoespaciais
+- **React Native Maps** - Geração e manipulação do mapa
+- **Maps SDK** - API Google Maps para renderização do mapa
+
+
+## 📋 Pré-requisitos
+
+Antes de começar, você precisa ter instalado em sua máquina:
+
+- [Node.js](https://nodejs.org/) (versão 16 ou superior)
+- [npm](https://www.npmjs.com/) ou [Yarn](https://yarnpkg.com/)
+- [Git](https://git-scm.com/)
+
+### API para acesso às funcionalidades:
+- [API](https://github.com/Giik4/api_projeto)
+
+### Chave própia para uso da API do Google Maps:
+- [Maps API](https://developers.google.com/maps/documentation/javascript/get-api-key?hl=pt-BR)
+
+### Para desenvolvimento Android e emulação de dispositivo:
+- [Android Studio](https://developer.android.com/studio)
+
+
+## 🔧 Instalação
+
+1. Clone o repositório:
 ```bash
-# using npm
-npm start
-
-# OR using Yarn
-yarn start
+git clone https://github.com/seu-usuario/nome-do-projeto.git
 ```
 
-## Step 2: Start your Application
-
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
-
+2. Acesse a pasta do projeto:
 ```bash
-# using npm
-npm run android
-
-# OR using Yarn
-yarn android
+cd nome-do-projeto
 ```
 
-### For iOS
-
+3. Instale as dependências:
 ```bash
-# using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
+npm install
+# ou
+yarn install
 ```
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+4. Insira a chave da API em android/app/src/main/AndroidManifest.xml:
+```xml
+<meta-data
+        android:name="com.google.android.geo.API_KEY"
+        android:value="SUA_CHAVE_DA_API" />
+```
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
 
-## Step 3: Modifying your App
+5. Siga o README da API e execute-a em segundo plano
 
-Now that you have successfully run the app, let's modify it.
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+## 🏃‍♂️ Como executar
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+### Usando Expo:
+```bash
+npx expo start
+```
 
-## Congratulations! :tada:
+### Usando React Native CLI:
 
-You've successfully run and modified your React Native App. :partying_face:
+Android:
+```bash
+npx react-native run-android
+```
 
-### Now what?
+### Metro Bundler:
+```bash
+npx react-native start
+```
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
 
-# Troubleshooting
+## 📁 Estrutura do Projeto
 
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+```
+src/
+├── components/          # Componentes reutilizáveis
+├── redux/               # Estados globais
+├── geoUtils/            # Funções geoespaciais
+├── screens/             # Telas do aplicativo
+├── services/            # Serviços e APIs
+```
 
-# Learn More
 
-To learn more about React Native, take a look at the following resources:
+## 📄 Licença
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+## 👨‍💻 Autor
+
+**Giovanni Siervo**
+- GitHub: [@Giik4](https://github.com/Giik4)
