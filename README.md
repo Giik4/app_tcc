@@ -72,8 +72,15 @@ yarn install
 
 5. Siga o README da API e execute-a em segundo plano
 
-6. Crie um arquivo .env local com o endereço de acesso da API:
-```
+
+## ⚙️ Configuração
+
+### Variáveis de Ambiente
+
+Crie um arquivo `.env` na raiz do projeto:
+
+```env
+# API
 API_URL= URL_DA_API
 ```
 
