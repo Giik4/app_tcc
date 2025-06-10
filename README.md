@@ -70,8 +70,12 @@ yarn install
         android:value="SUA_CHAVE_DA_API" />
 ```
 
-
 5. Siga o README da API e execute-a em segundo plano
+
+6. Crie um arquivo .env local com o endereço de acesso da API:
+```
+API_URL= URL_DA_API
+```
 
 
 ## 🏃‍♂️ Como executar
