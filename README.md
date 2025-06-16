@@ -63,13 +63,6 @@ npm install
 yarn install
 ```
 
-4. Insira a chave da API em android/app/src/main/AndroidManifest.xml:
-```xml
-<meta-data
-        android:name="com.google.android.geo.API_KEY"
-        android:value="SUA_CHAVE_DA_API" />
-```
-
 5. Siga o README da API e execute-a em segundo plano
 
 
@@ -77,7 +70,17 @@ yarn install
 
 ### Variáveis de Ambiente
 
-Crie um arquivo `.env` na raiz do projeto:
+1. Insira a chave da API em android/app/src/main/AndroidManifest.xml:
+```xml
+</activity>
+      <meta-data
+        android:name="com.google.android.geo.API_KEY"
+        android:value="AIzaSyDpX1mmSM1k8fpnZ7PT_MpzeVmLfFRRJVM" />
+    </application>
+</manifest>
+```
+
+2. Crie um arquivo `.env` na raiz do projeto:
 
 ```env
 # API
