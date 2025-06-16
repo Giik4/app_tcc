@@ -75,7 +75,7 @@ yarn install
 </activity>
       <meta-data
         android:name="com.google.android.geo.API_KEY"
-        android:value="AIzaSyDpX1mmSM1k8fpnZ7PT_MpzeVmLfFRRJVM" />
+        android:value="SUA_CHAVE_API" />
     </application>
 </manifest>
 ```
