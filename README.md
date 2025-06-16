@@ -70,12 +70,12 @@ yarn install
 
 ### Variáveis de Ambiente
 
-1. Insira a chave da API em android/app/src/main/AndroidManifest.xml:
+1. Insira a chave da API do Maps em android/app/src/main/AndroidManifest.xml:
 ```xml
 </activity>
       <meta-data
         android:name="com.google.android.geo.API_KEY"
-        android:value="SUA_CHAVE_API" />
+        android:value="SUA_CHAVE_API_MAPS" />
     </application>
 </manifest>
 ```
