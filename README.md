@@ -2,7 +2,10 @@
 
 Este aplicativo é voltado para planejamento de caminho de cobertura de Veículos Aéreos não Tripulados e monitoramento de lavouras. Permite a criação de conta, cadastro de plantação e planeja o caminho de cobertura da área delimitada pelo usuário (somente áreas em formato de polígono convexo). Possui integração com banco de dados para salvar informações e manter um histórico.
 
+## ▶️ Vídeo de demonstração
+- https://youtu.be/Z_HmD-2fqFU?feature=shared
 
+  
 ## 🚀 Funcionalidades
 
 - [ ] Multiusuário
